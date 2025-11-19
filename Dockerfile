@@ -1,29 +1,40 @@
-# Use the official Golang image as a build stage
-FROM golang:1.23 AS builder
+# ==========
+# Build stage
+# ==========
+FROM golang:1.24 AS builder
 
-# Set the current working directory inside the container
+# On travaille dans /app
 WORKDIR /app
 
-# Copy the Go module files and download the dependencies
-COPY go.mod go.sum ./
+# 1) On copie le module du serveur (go.mod/go.sum du dossier server)
+COPY server/go.mod server/go.sum ./server/
+
+# On va dans server et on télécharge les dépendances
+WORKDIR /app/server
 RUN go mod download
 
-# Copy the entire project into the container
+# 2) On copie le reste du code (api, etc.)
+WORKDIR /app
 COPY . .
 
-# Build the gRPC server
-RUN CGO_ENABLED=0 GOOS=linux go build -o main ./main.go
+# On reviens dans server et on build le binaire
+WORKDIR /app/server
+RUN CGO_ENABLED=0 GOOS=linux go build -o library-server .
 
-RUN ls .
-# Use a minimal base image to reduce the final image size
+# ==========
+# Runtime stage
+# ==========
 FROM alpine:latest
 
-# Copy the compiled binary from the builder stage
-COPY --from=builder /app/main .
+WORKDIR /app
 
-# Expose the port on which the server will run
-EXPOSE 50051
-EXPOSE 2112
+# On copie juste le binaire compilé
+COPY --from=builder /app/server/library-server /app/library-server
 
-# Command to run the server when the container starts
-CMD ["./main"]
+# Ports :
+# - 50051 = gRPC
+# - 2112 = Prometheus metrics
+EXPOSE 50051 2112
+
+# On lance le serveur
+CMD ["/app/library-server"]
