@@ -1,122 +1,117 @@
-📚 Library gRPC Server – Monitoring Deployment
-Horizon University – SRE / Observability Assignment
+<div align="center">
+📚 Library gRPC Server — Monitoring & Observability
+🏫 Horizon University · SRE / Cloud Engineering
 
-This repository contains the complete monitoring deployment of the Library gRPC Server, instrumented with Prometheus and deployed on the university’s Amazon EKS cluster using Helm.
 
-🚀 Summary of the Work
 
-This project demonstrates:
 
-Building a Docker image for the Library gRPC server
 
-Publishing the image to Docker Hub
 
-Creating a complete Helm chart for deployment
 
-Deploying the service to the Horizon University EKS cluster
 
-Exposing gRPC and Prometheus metrics ports
+</div>
+📌 Table of Contents
+🎯 Project Overview
 
-Verifying and scraping metrics using Prometheus
-
-🛠️ Technologies Used
-
-Go (gRPC server + Prometheus middleware)
-
-Docker (multi-stage build)
-
-Kubernetes (Amazon EKS cluster: horizon2025)
-
-Helm (deployment automation)
-
-Prometheus (metrics scraping)
-
-AWS CLI & kubectl
+🛠️ Stack Used :
 
 🐳 Docker Image
-
-Public Docker image available at:
-docker.io/ahmedgaida/library-server:monitoring
-
-Commands used to build and push the image:
-
-docker build -t ahmedgaida/library-server:monitoring .
-
-docker push ahmedgaida/library-server:monitoring
-
 📦 Helm Deployment
-
-Helm chart directory: library-server-chart
-
-Deployment steps:
-
-kubectl create namespace sre
-
-helm install library-server library-server-chart/ -n sre
-
-To update: helm upgrade library-server library-server-chart/ -n sre
-
-After deployment, verify with:
-
-kubectl get pods -n sre
-
-kubectl get svc -n sre
-
-Expected result:
-
-Pod in "Running" state
-
-Service exposing ports: 50051 (gRPC) and 2112 (Prometheus metrics)
-
-📊 Accessing Metrics
-
-Forward the Prometheus metrics port locally:
-
-kubectl port-forward -n sre svc/library-server-library-server-chart 30112:2112
-
-Then open metrics in your browser or terminal at:
-http://localhost:30112/metrics
-You will see metrics such as:
-
-go_gc_duration_seconds
-
-grpc_server_handled_total
-
-process_cpu_seconds_total
-
-etc.
-
-📈 Prometheus Query (for Instructor Verification)
-
-Use the following query to verify the gRPC activity:
-
-sum(rate(grpc_server_handled_total[5m])) by (grpc_service, grpc_method)
-
-This displays the request rate per gRPC service and method.
-
-📂 Project Structure Overview
-
-library/
-• api/ — Generated protobuf & gRPC files
-• client/ — Minimal gRPC client
-• server/ — gRPC server instrumented with Prometheus
-• Dockerfile — Multi-stage Docker build
-• library-server-chart/ — Helm chart
-
+📊 Metrics & Observability
+📈 Prometheus Query
+📂 Project Structure
 👤 Author
-
-Ahmed Gaida
-Horizon University — SLO / SRE Module
-Skills: Docker • Kubernetes • Helm • AWS • Prometheus • gRPC
-
 ✅ Deployment Status
 
-This project has been successfully deployed on the Horizon University EKS cluster:
+🎯 1. Project Overview
 
-Cluster: horizon2025
+This repository contains the monitoring and deployment of the Library gRPC Server using:
+Docker (multi-stage image)
+Helm (templated deployment)
+Amazon EKS (cluster horizon2025)
+Prometheus (metrics scraping)
 
-Region: eu-south-1
+The objective:
+✔ Package the gRPC application
+✔ Deploy it to Kubernetes
+✔ Expose metrics
+✔ Verify KPIs via Prometheus
 
-Namespace: sre
+🛠️ 2. Stack Used
 
-Metrics: exposed and scraped by Prometheus
+Go – gRPC server with Prometheus middleware
+Docker – multi-stage builds
+Helm – deployment automation
+Kubernetes (AWS EKS) – horizon2025 cluster
+Prometheus – metrics scraping
+AWS CLI + kubectl
+
+🐳 3. Docker Image
+
+Public image available at:
+🔗 docker.io/ahmedgaida/library-server:monitoring
+Image built & pushed using:
+docker build -t ahmedgaida/library-server:monitoring .
+docker push ahmedgaida/library-server:monitoring
+
+📦 4. Helm Deployment
+
+Folder: library-server-chart/
+Deployment
+kubectl create namespace sre
+helm install library-server library-server-chart/ -n sre
+Upgrade
+helm upgrade library-server library-server-chart/ -n sre
+Verify
+kubectl get pods -n sre
+kubectl get svc -n sre
+Expected results:
+
+| Component | Status                                      |
+| --------- | ------------------------------------------- |
+| Pod       | Running                                     |
+| Service   | Exposes **50051/gRPC** and **2112/metrics** |
+
+📊 5. Metrics & Observability
+
+Forward metrics locally :
+kubectl port-forward -n sre svc/library-server-library-server-chart 30112:2112
+Then open:
+
+👉 http://localhost:30112/metrics
+Metrics exposed include:
+go_gc_duration_seconds
+grpc_server_handled_total
+process_cpu_seconds_total
+and more…
+
+📈 6. Prometheus Query (Instructor Required)
+
+Use this query in Prometheus:
+sum(rate(grpc_server_handled_total[5m])) by (grpc_service, grpc_method)
+Shows gRPC traffic grouped by service & method.
+
+📂 7. Project Structure
+
+library/
+├── api/                     # gRPC generated files
+├── client/                  # Demo gRPC client
+├── server/                  # Prometheus-instrumented gRPC server
+├── Dockerfile               # Multi-stage image
+└── library-server-chart/    # Helm chart
+
+👤 8. Author
+
+Ahmed Gaida
+Horizon University — Cloud / SRE / DevOps
+Skills: Docker · Kubernetes · Prometheus · gRPC · Helm · AWS
+
+✅ 9. Deployment Status
+
+Successfully deployed to Horizon University EKS:
+| Property  | Value                 |
+| --------- | --------------------- |
+| Cluster   | horizon2025           |
+| Region    | eu-south-1            |
+| Namespace | sre                   |
+| Metrics   | Scraped by Prometheus |
