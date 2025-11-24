@@ -9,8 +9,8 @@
 5. 📊 Metrics & Observability  
 6. 📈 Prometheus Query  
 7. 📂 Project Structure  
-8. 👤 Author  
-9. ✅ Deployment Status  
+8. ✅ Deployment Status  
+9. 👤 Author 
 
 ### 🎯 1. Project Overview
 
